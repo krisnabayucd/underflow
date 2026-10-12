@@ -1,0 +1,2 @@
+export async function encode(data:any){const stream=new Blob([JSON.stringify(data)]).stream().pipeThrough(new CompressionStream('gzip'));return 'gz:'+Buffer.from(await new Response(stream).arrayBuffer()).toString('base64')}
+export async function decode(value:string){if(!value.startsWith('gz:'))return JSON.parse(value);const bytes=Buffer.from(value.slice(3),'base64');return JSON.parse(await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).text())}
